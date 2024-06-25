@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Пользователь</title>
+</head>
+<body>
+<p th:text="${user.getId()}">VALUE</p>
+<p th:text="${user.getUsername()}">VALUE</p>
+<p th:text="${user.getEmail()}">VALUE</p>
+
+<form th:action="@{/logout}" method="post">
+  <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+  <button type="submit">Выйти из аккаунта</button>
+</form>
+
+</body>
+</html>

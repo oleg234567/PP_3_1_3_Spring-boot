@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Пользователи</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
+<body>
+
+<div class="container">
+    <div class="row align-items-center">
+        <div th:each="user : ${users}" class="card mb-2 mr-2">
+            <form th:method="GET" th:action="@{/admin/{id}(id=${user.getId()})}">
+                <input type="submit" value="Просмотр"/>
+                <input type="hidden" name="id" th:value="${user.getId()}"/>
+            </form>
+
+            <div class="card-header" th:text="${user.getId()}"/>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item" th:text="|Имя: ${user.getUsername()}|"/>
+                <li class="list-group-item" th:text="|Почта: ${user.getEmail()}|"/>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<br/>
+<hr/>
+
+<a href="/admin/create">Создать нового пользователя</a>
+
+<form th:action="@{/logout}" method="post">
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    <button type="submit">Выйти из аккаунта</button>
+</form>
+
+</body>
+</html>
