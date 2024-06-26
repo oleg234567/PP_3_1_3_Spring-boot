@@ -3,17 +3,18 @@ package ru.kata.spring.boot_security.demo.controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
+import ru.kata.spring.boot_security.demo.service.UserService;
+
 
 import java.security.Principal;
 
 @RestController
 public class UserController {
-    private final UserServiceImpl userServiceConfigImpl;
+    private final UserService userService;
 
-   public UserController(UserServiceImpl userServiceConfigImpl) {
-       this.userServiceConfigImpl = userServiceConfigImpl;
-   }
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/")
     public String homePage() {
@@ -21,26 +22,15 @@ public class UserController {
     }
 
     @GetMapping("/authenticated")
-    public String authenticated(Principal principal) {
-        User user = userServiceConfigImpl.findByUsername(principal.getName());
+    public String authenticatedPage(Principal principal) {
+        User user = userService.findByUsername(principal.getName());
         return "secured part of web service: " + user.getUsername() + " " + user.getEmail();
     }
 
     @GetMapping("/user")
     public String userPage(Principal principal) {
-        User user = userServiceConfigImpl.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName());
         return "secured part of web service: " + user.getUsername() + " " + user.getEmail();
-    }
-
-
-    @GetMapping("/read_profile")
-    public String pageForReadProfile() {
-        return "read profile page";
-    }
-
-    @GetMapping("/only_for_admins")
-    public String pageOnlyForAdmins() {
-        return "admins page";
     }
 
 }

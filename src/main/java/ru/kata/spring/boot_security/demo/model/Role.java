@@ -22,4 +22,12 @@ public class Role implements GrantedAuthority {
     }
     @ManyToMany(mappedBy = "roles")
     List<User> users;
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "name='" + name + '\'' +
+                ", id=" + id +
+                '}';
+    }
 }

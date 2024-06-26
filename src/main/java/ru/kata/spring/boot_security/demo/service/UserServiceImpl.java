@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.RoleRepository;
@@ -45,6 +47,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void saveUser(User user, List<Long> roles) {
+        if (user == null || StringUtils.isEmpty(user.getUsername()) || StringUtils.isEmpty(user.getEmail())
+                || StringUtils.isEmpty(user.getPassword()) || CollectionUtils.isEmpty(roles)) {
+            throw new IllegalArgumentException("Invalid user data");
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         List<Role> roles1 = roleRepository.findAllById(roles);
         user.setRoles(new HashSet<>(roles1));
@@ -61,6 +67,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void updateUser(User user, Long id, List<Long> selectedRoles) {
         User savedUser = userRepository.getById(id);
+        if (savedUser == null) {
+            throw new IllegalArgumentException("User with id " + id + " not found");
+        }
+        if (user == null || StringUtils.isEmpty(user.getUsername()) || StringUtils.isEmpty(user.getEmail())
+                || StringUtils.isEmpty(user.getPassword()) || CollectionUtils.isEmpty(selectedRoles)) {
+            throw new IllegalArgumentException("Invalid user data");
+        }
         savedUser.setUsername(user.getUsername());
         savedUser.setEmail(user.getEmail());
         savedUser.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -75,13 +88,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException("No user found with username" + username);
+            throw new UsernameNotFoundException("No user found with username" + email);
         }
         return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
+                user.getEmail(),
                 user.getPassword(),
                 mapRolesToAuthorities(user.getRoles()));
     }

@@ -31,6 +31,8 @@ public class AdminController {
     @GetMapping()
     public String getAllUser(Model model) {
         model.addAttribute("users", userService.getAllUser());
+        model.addAttribute("allRoles", roleService.getAllRoles());
+        model.addAttribute("newUser", new User());
         return "users";
     }
 
@@ -39,6 +41,7 @@ public class AdminController {
         model.addAttribute("user", userService.getUserById(id));
         return "show";
     }
+
 
     @GetMapping("/create")
     public String createUserForm(Model model) {
@@ -49,12 +52,10 @@ public class AdminController {
 
     @PostMapping("/new")
     public String createUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult,
-                         @RequestParam(name = "selectedRoles", required = false) Long[] selectedRoles) {
-        if (bindingResult.hasErrors()) {
-            return "new";
-        }
-        List<Long> roles = selectedRoles != null ? Arrays.asList(selectedRoles) : Collections.emptyList();
-        userService.saveUser(user, roles);
+                             @RequestParam(name = "selectedRoles", required = false) Long[] selectedRoles) {
+
+
+        userService.saveUser(user, Arrays.asList(selectedRoles));
         return "redirect:/admin";
     }
 
@@ -68,10 +69,7 @@ public class AdminController {
 
     @PostMapping("/edit")
     public String updateUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult,
-                         @RequestParam("id") Long id, @RequestParam(name = "selectedRoles", required = false) Long[] selectedRoles) {
-        if (bindingResult.hasErrors()) {
-            return "edit";
-        }
+                             @RequestParam("id") Long id, @RequestParam(name = "selectedRoles", required = false) Long[] selectedRoles) {
         userService.updateUser(user, id, Arrays.asList(selectedRoles));
         return "redirect:/admin";
     }

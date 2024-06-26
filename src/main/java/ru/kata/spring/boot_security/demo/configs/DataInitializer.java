@@ -32,7 +32,7 @@ public class DataInitializer {
             admin.setUsername("admin");
             admin.setPassword("admin123");
             admin.setEmail("admin@mail.ru");
-            userService.saveUser(admin, List.of(userRole.getId()));
+            userService.saveUser(admin, List.of(adminRole.getId()));
         };
     }
 }
